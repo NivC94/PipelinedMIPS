@@ -10,6 +10,8 @@ port (
 		WRITE_REG		: in std_logic_vector(4 downto 0);		--register to be written to
 		REG_WRITE_IN	: in std_logic;							--write enable of the regfile
 		
+		CLK				: in std_logic;
+		
 		--Jump controll signals
 		BRANCH_EQUAL	: out std_logic;						--HIGH if branch and comperator outputs are HIGH
 		JUMP			: out std_logic;
@@ -88,6 +90,22 @@ architecture struct of instruction_decode_module is
 		C_OUT	: out std_logic
 	);
 	end component;
+	
+	component register_file is
+	port(
+		READ_REG_1		: in std_logic_vector (4 downto 0);
+		READ_REG_2		: in std_logic_vector (4 downto 0);
+		
+		CLK				: in std_logic;
+		
+		REG_WRITE		: in std_logic;
+		WRITE_REG		: in std_logic_vector (4 downto 0);
+		WRITE_DATA		: in std_logic_vector (31 downto 0);
+		
+		READ_DATA_1		: out std_logic_vector (31 downto 0);
+		READ_DATA_2		: out std_logic_vector (31 downto 0)
+	);
+	end component;
 			
 -- Signal declaration
 
@@ -138,6 +156,21 @@ ADDER: adder_32bits
 		B	=> sign_ext_immediate_sig,
 		
 		SUM	=> BRANCH_ADDRESS
+	);
+	
+REG_FILE: register_file
+	port map(
+		READ_REG_1		=> INSTRUCTION(25 downto 21),
+	    READ_REG_2		=> INSTRUCTION(20 downto 16),
+	    
+	    CLK				=> CLK,
+	    
+	    REG_WRITE		=> REG_WRITE_IN,
+	    WRITE_REG		=> WRITE_REG,
+	    WRITE_DATA		=> WRITE_DATA,
+	    
+	    READ_DATA_1		=> read_data_out1_sig,
+	    READ_DATA_2		=> read_data_out2_sig
 	);
 	
 	--Extract opcode out of the INSTRUCTION
