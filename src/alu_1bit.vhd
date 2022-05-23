@@ -1,7 +1,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-entity alu_control_unit is
+entity alu_1bit is
 port(
 	FUNCT			: in std_logic_vector(5 downto 0);
 	ALU_OP			: in std_logic_vector(1 downto 0);
@@ -10,7 +10,7 @@ port(
 );
 end entity;
 
-architecture behave of alu_control_unit is
+architecture behave of alu_1bit is
 
 	constant alu_op_lw_sw		: std_logic_vector(1 downto 0) := "00";
 	constant alu_op_beq			: std_logic_vector(1 downto 0) := "01";
