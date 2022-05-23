@@ -1,0 +1,8 @@
+
+*.wlf
+*.qdb
+sim/work/_info
+*.qpg
+*.qtl
+sim/work/_vmake
+*.bak
