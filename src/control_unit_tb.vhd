@@ -77,7 +77,6 @@ DUT: control_unit
 	);
 	
 	process
-	variable addr : std_logic_vector(31 downto 0) := (others => '0');
 	begin
 		wait for 10 ns;
 		
