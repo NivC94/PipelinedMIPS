@@ -34,13 +34,12 @@ architecture sim of mux_1bit_4_to_1_tb is
 
 begin
 
-	d_in0_sig <=	'0', '1' after 20 ns, '0' after 40 ns, '1' after 60 ns;
-	d_in1_sig <=	'1', '0' after 40 ns, '1' after 60 ns;
-	d_in2_sig <=	'1', '0' after 20 ns, '0' after 40 ns, '1' after 60 ns;
-	d_in3_sig <=	'0', '1' after 20 ns, '0' after 40 ns, '1' after 60 ns;
+	d_in0_sig <=	'1', '0' after 20 ns;
+	d_in1_sig <=	'0', '1' after 20 ns, '0' after 40 ns;
+	d_in2_sig <=	'0', '1' after 40 ns, '0' after 60 ns;
+	d_in3_sig <=	'0', '1' after 60 ns;
 	
-	d_in_sig <= "01", "10" after 20 ns, "00" after 40 ns, "11" after 60 ns;
-	sel_sig	<= "0", "1" after 20 ns, "0" after 40 ns, "1" after 60 ns;
+	sel_sig	<= "00", "01" after 20 ns, "10" after 40 ns, "11" after 60 ns;
 
 -- Components instantiations
 
