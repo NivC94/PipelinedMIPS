@@ -7,13 +7,13 @@ port(
 	B			: in std_logic;
 	LESS		: in std_logic;
 	C_IN		: in std_logic;
-	C_OUT		: in std_logic;
 	
 	A_INVERT	: in std_logic;
 	B_INVERT	: in std_logic;
 	
-	OPERATION	: in std_logic_vector(2 downto 0);
+	OPERATION	: in std_logic_vector(1 downto 0);
 	
+	C_OUT		: out std_logic;
 	SET			: out std_logic;
 	RESULT		: out std_logic
 );
@@ -41,7 +41,6 @@ architecture behave of alu_1bit is
 			
 			SUM		: out	std_logic;
 			C_OUT	: out	std_logic
-			
 		);
 	end component;
 	
@@ -68,7 +67,6 @@ architecture behave of alu_1bit is
 	signal a_and_b			: std_logic;
 	signal a_or_b			: std_logic;
 	signal a_b_sum			: std_logic;
-	signal a_b_carry_out	: std_logic;
 	
 
 begin
@@ -76,10 +74,10 @@ begin
 	a_inv <= not A;
 	b_inv <= not B;
 	
-	a_and_b <= selected_a and selected_b;
-	a_and_b <= selected_a or selected_b;
+	a_and_b <= (selected_a and selected_b);
+	a_and_b <= (selected_a or selected_b);
 	
-	SET <= a_b_carry_out;
+	SET <= a_b_sum;
 	
 -- Components instantiations
 	
@@ -108,15 +106,18 @@ begin
 		C_IN	=>	C_IN,
 		
 		SUM		=>	a_b_sum,
-		C_OUT	=>	a_b_carry_out
+		C_OUT	=>	C_OUT
 	);
 	
-	mux_1bit_4_to_1
+	RESULT_SELECT_MUX: mux_1bit_4_to_1
 	port map (
-		D_IN	=>	d_in_sig,
-		SEL		=>	sel_sig,
+		D_IN0	=>	a_and_b,
+		D_IN1	=>	a_or_b,
+		D_IN2	=>	a_b_sum,
+		D_IN3	=>	LESS,
 		
-		Q		=>	q_sig
+		SEL		=>	OPERATION,
+		Q		=>	RESULT
 	);
 	
 end architecture;

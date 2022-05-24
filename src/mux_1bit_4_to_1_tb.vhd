@@ -1,7 +1,5 @@
 library ieee;
 use ieee.std_logic_1164.all;
-use IEEE.math_real."ceil";
-use IEEE.math_real."log2";
 use ieee.numeric_std.all;
 
 entity mux_1bit_4_to_1_tb is

@@ -9,7 +9,6 @@ entity full_adder is
 		
 		SUM		: out	std_logic;
 		C_OUT	: out	std_logic
-		
 	);
 end entity;
 
