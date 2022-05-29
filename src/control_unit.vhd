@@ -31,6 +31,7 @@ architecture behave of control_unit is
 	constant beq_opcode			: std_logic_vector(5 downto 0) := "000100";
 	constant lw_opcode			: std_logic_vector(5 downto 0) := "100011";
 	constant sw_opcode			: std_logic_vector(5 downto 0) := "101011";
+	constant addi_opcode		: std_logic_vector(5 downto 0) := "001000";
 	
 begin
 	
@@ -40,6 +41,7 @@ with OPCODE select
 					'1' when beq_opcode,
 					'0' when lw_opcode,
 					'0' when sw_opcode,
+					'0' when addi_opcode,
 					'0' when others;
 
 with OPCODE select				
@@ -48,6 +50,7 @@ with OPCODE select
 					'0' when beq_opcode,
 					'0' when lw_opcode,
 					'0' when sw_opcode,
+					'0' when addi_opcode,
 					'0' when others;
 				
 with OPCODE select				
@@ -56,6 +59,7 @@ with OPCODE select
 					'0' when beq_opcode,
 					'1' when lw_opcode,
 					'0' when sw_opcode,
+					'0' when addi_opcode,
 					'0' when others;
 
 with OPCODE select
@@ -64,6 +68,7 @@ with OPCODE select
 					'0' when beq_opcode,
 					'1' when lw_opcode,
 					'0' when sw_opcode,
+					'1' when addi_opcode,
 					'0' when others;
 
 with OPCODE select			
@@ -72,6 +77,7 @@ with OPCODE select
 					'0' when beq_opcode,
 					'1' when lw_opcode,
 					'0' when sw_opcode,
+					'0' when addi_opcode,
 					'0' when others;
 
 with OPCODE select			
@@ -80,6 +86,7 @@ with OPCODE select
 					'0' when beq_opcode,
 					'0' when lw_opcode,
 					'1' when sw_opcode,
+					'0' when addi_opcode,
 					'0' when others;
 
 with OPCODE select			
@@ -88,6 +95,7 @@ with OPCODE select
 					'0' when beq_opcode,
 					'1' when lw_opcode,
 					'1' when sw_opcode,
+					'1' when addi_opcode,
 					'0' when others;
 					
 with OPCODE select
@@ -96,6 +104,7 @@ with OPCODE select
 					'0' when beq_opcode,
 					'0' when lw_opcode,
 					'0' when sw_opcode,
+					'0' when addi_opcode,
 					'0' when others;
 					
 with OPCODE select					
@@ -104,6 +113,7 @@ with OPCODE select
 					"01" when beq_opcode,
 					"00" when lw_opcode,
 					"00" when sw_opcode,
+					"00" when addi_opcode,
 					"00" when others;
 
 end architecture;

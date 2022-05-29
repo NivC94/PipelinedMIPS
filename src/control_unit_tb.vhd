@@ -11,7 +11,7 @@ architecture sim of control_unit_tb is
 	constant beq_opcode			: std_logic_vector(5 downto 0) := "000100";
 	constant lw_opcode			: std_logic_vector(5 downto 0) := "100011";
 	constant sw_opcode			: std_logic_vector(5 downto 0) := "101011";
-
+	constant addi_opcode		: std_logic_vector(5 downto 0) := "001000";
 -- Component declaration
 
 	component control_unit is
@@ -93,6 +93,12 @@ DUT: control_unit
 		wait for 50 ns;
 		
 		opcode_sig <= sw_opcode;
+		wait for 50 ns;
+		
+		opcode_sig <= addi_opcode;
+		wait for 50 ns;
+		
+		opcode_sig <= "101010"; --this opcode is not supported should give LOW on all the controll signals
 		wait for 50 ns;
 		
 		opcode_sig <= "111111"; --this opcode is not supported should give LOW on all the controll signals
