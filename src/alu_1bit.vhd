@@ -75,7 +75,7 @@ begin
 	b_inv <= not B;
 	
 	a_and_b <= (selected_a and selected_b);
-	a_and_b <= (selected_a or selected_b);
+	a_or_b <= (selected_a or selected_b);
 	
 	SET <= a_b_sum;
 	
@@ -84,8 +84,8 @@ begin
 	A_SELECT_MUX: mux_1bit_2to1
 	port map (
 		D_IN0	=>	A,
-		D_IN1	=>	A_INVERT,
-		SEL		=>	a_inv,
+		D_IN1	=>	a_inv,
+		SEL		=>	A_INVERT,
 		
 		Q		=>	selected_a
 	);
@@ -93,8 +93,8 @@ begin
 	B_SELECT_MUX: mux_1bit_2to1
 	port map (
 		D_IN0	=>	B,
-		D_IN1	=>	B_INVERT,
-		SEL		=>	b_inv,
+		D_IN1	=>	b_inv,
+		SEL		=>	B_INVERT,
 		
 		Q		=>	selected_b
 	);
