@@ -13,7 +13,7 @@ port (
 		CLK				: in std_logic;
 		
 		--Jump controll signals
-		BRANCH_EQUAL	: out std_logic;						--HIGH if branch and comperator outputs are HIGH
+		BRANCH_EQUAL	: out std_logic;						--HIGH if branch and comparator outputs are HIGH
 		JUMP			: out std_logic;
 		
 		--WB controll signals
@@ -109,15 +109,16 @@ architecture struct of instruction_decode_module is
 			
 -- Signal declaration
 
-	signal opcode_sig				: std_logic_vector(5 downto 0);
+	signal opcode_sig						: std_logic_vector(5 downto 0);
 	
-	signal branch_sig				: std_logic;
-	signal equal_sig				: std_logic;
+	signal branch_sig						: std_logic;
+	signal equal_sig						: std_logic;
 	
-	signal read_data_out1_sig		: std_logic_vector(31 downto 0);
-	signal read_data_out2_sig		: std_logic_vector(31 downto 0);
+	signal read_data_out1_sig				: std_logic_vector(31 downto 0);
+	signal read_data_out2_sig				: std_logic_vector(31 downto 0);
 	
-	signal sign_ext_immediate_sig	: std_logic_vector(31 downto 0);
+	signal sign_ext_immediate_sig			: std_logic_vector(31 downto 0);
+	signal shifted_sign_ext_immediate_sig	: std_logic_vector(31 downto 0);
 
 begin
 -- Component instantiations
@@ -150,12 +151,13 @@ COMP: comparator_nbits
 	);
 	
 	--32bit adder for the brach address
-ADDER: adder_32bits
+ADDER1: adder_32bits
 	port map(
-		A	=> PC_PLUS4, 
-		B	=> sign_ext_immediate_sig,
+		A		=> PC_PLUS4, 
+		B		=> shifted_sign_ext_immediate_sig,
 		
-		SUM	=> BRANCH_ADDRESS
+		SUM		=> BRANCH_ADDRESS,
+		C_OUT	=> open
 	);
 	
 REG_FILE: register_file
@@ -177,12 +179,14 @@ REG_FILE: register_file
 	opcode_sig <= INSTRUCTION(31 downto 26);
 	
 	--Extract RT and RD registers from the INSTRUCTION
-	RT_REG <= INSTRUCTION(15 downto 11);
-	RD_REG <= INSTRUCTION(20 downto 16);
+	RD_REG <= INSTRUCTION(15 downto 11);
+	RT_REG <= INSTRUCTION(20 downto 16);
 	
 	--Extract and extend immediate from INSTRUCTION
 	sign_ext_immediate_sig(15 downto 0) <= INSTRUCTION(15 downto 0);
 	sign_ext_immediate_sig(31 downto 16) <= (others => INSTRUCTION(15));
+	
+	shifted_sign_ext_immediate_sig <= sign_ext_immediate_sig(29 downto 0) & "00";
 	
 	--Connect the extended immediate to the output
 	IMMEDIATE_OUT <= sign_ext_immediate_sig;
@@ -199,6 +203,5 @@ REG_FILE: register_file
 	--Connect the read data from the reg file to the output
 	READ_DATA_OUT1 <= read_data_out1_sig;
 	READ_DATA_OUT2 <= read_data_out2_sig;
-	
 end architecture;
 		
