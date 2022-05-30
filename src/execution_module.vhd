@@ -6,7 +6,7 @@ port (
 	REG_DATA_IN1	: in std_logic_vector(31 downto 0);
 	REG_DATA_IN2	: in std_logic_vector(31 downto 0);
 	IMMEDIATE_IN	: in std_logic_vector(31 downto 0);
-	FUNCT			: in std_logic_vector(31 downto 0);
+	FUNCT			: in std_logic_vector(5 downto 0);
 	
 	RT_REG			: in std_logic_vector(4 downto 0); -- Ins[20:16]
 	RD_REG			: in std_logic_vector(4 downto 0); -- Ins[15:11]
@@ -24,97 +24,107 @@ architecture struct of execution_module is
 	
 -- Component declaration
 	
-	component mux2to1_32bit is
+	component mux_n_bit_2to1 is
+	generic(
+		G_NUM_OF_BITS	: integer := 32
+	);
 	port(
-		D_IN0	: in std_logic_vector(31 downto 0);
-		D_IN1	: in std_logic_vector(31 downto 0);
+		D_IN0	: in std_logic_vector((G_NUM_OF_BITS-1) downto 0);
+		D_IN1	: in std_logic_vector((G_NUM_OF_BITS-1) downto 0);
 
 		SEL		: in std_logic;	
-		Q		: out std_logic_vector(31 downto 0)
+		Q		: out std_logic_vector((G_NUM_OF_BITS-1) downto 0)
+	);
+	end component;
+	
+	component alu_32bit is
+	port(
+		A			: in std_logic_vector(31 downto 0);
+		B			: in std_logic_vector(31 downto 0);
+		C_IN		: in std_logic;
+		
+		A_INVERT	: in std_logic;
+		B_INVERT	: in std_logic;
+		
+		OPERATION	: in std_logic_vector(1 downto 0);
+		
+		RESULT		: out std_logic_vector(31 downto 0)
+	);
+	end component;
+	
+	component alu_control_unit is
+	port(
+		FUNCT			: in std_logic_vector(5 downto 0);
+		ALU_OP			: in std_logic_vector(1 downto 0);
+		
+		A_INVERT		: out std_logic := '0';
+		B_INVERT		: out std_logic;
+		C_IN			: out std_logic;
+		OPERATION		: out std_logic_vector(1 downto 0)
 	);
 	end component;
 	
 -- Signals declaration
 	
-	signal pc_in_sig					: std_logic_vector(31 downto 0);
-	signal pc_out_sig					: std_logic_vector(31 downto 0);
+	signal alu_b_in_sig		: std_logic_vector(31 downto 0);
 	
-	signal pc_plus_4_sig				: std_logic_vector(31 downto 0);
-	signal branch_addition_sig			: std_logic_vector(31 downto 0);
-	signal pc_branch_sig				: std_logic_vector(31 downto 0);
-	signal pc_jump_sig					: std_logic_vector(31 downto 0);
-	
-	signal branch_mux_to_jump_mux		: std_logic_vector(31 downto 0);
-	
-	signal instruction_sig				: std_logic_vector(31 downto 0);
-	signal instruction_imm_sign_ext_sig	: std_logic_vector(13 downto 0); -- signal for instruction immediate sign extension
+	signal alu_a_invert_sig	: std_logic;
+	signal alu_b_invert_sig	: std_logic;
+	signal alu_c_in_sig		: std_logic;
+
+	signal alu_operation_sig	: std_logic_vector(1 downto 0);
 	
 begin
 
 -- Components instantiations
 
-I_MEM: instruction_memory
+ALU_SRC_MUX: mux_n_bit_2to1
 	generic map (
-		G_ADDR_WIDTH		=>	g_addr_width,
-		G_IMEM_FILE_NAME	=>	g_imem_file_name
+		G_NUM_OF_BITS => 32
 	)
 	port map (
-		READ_ADDR	=>	pc_out_sig,
+		D_IN0	=>	REG_DATA_IN2,
+		D_IN1	=>	IMMEDIATE_IN,
+		SEL		=>	ALU_SRC,
 		
-		INSTRUCTION	=> instruction_sig
+		Q		=>	alu_b_in_sig
 	);
 	
-PC: pc_reg
+REG_DST_MUX: mux_n_bit_2to1
+	generic map (
+		G_NUM_OF_BITS => 5
+	)
 	port map (
-		PC_IN	=>	pc_in_sig,
-	    
-	    CLK		=>	clk,
-	    RST		=>	rst,
-	    
-		PC_OUT	=>	pc_out_sig
-	);
-	
-ADDER_PLUS_4: adder_32bits
-	port map (
-		A		=>	pc_out_sig,
-	    B		=>	CONST_4,
-	    
-	    SUM		=>	pc_plus_4_sig
-	);
-	
-ADDER_BRANCH: adder_32bits
-	port map (
-		A		=>	pc_plus_4_sig,
-	    B		=>	branch_addition_sig,
-	    
-	    SUM		=>	pc_branch_sig
-	);
-	
-BRANCH_MUX: mux2to1_32bit
-	port map (
-		D_IN0	=>	pc_plus_4_sig,
-		D_IN1	=>	pc_branch_sig,
+		D_IN0	=>	RT_REG,
+		D_IN1	=>	RD_REG,
+		SEL		=>	REG_DST,
 		
-		SEL		=>	BRANCH_SEL,
-		Q		=>	branch_mux_to_jump_mux
+		Q		=>	REG_OUT
 	);
-	
-JUMP_MUX: mux2to1_32bit
+
+ALU: alu_32bit
 	port map (
-		D_IN0	=>	branch_mux_to_jump_mux,
-		D_IN1	=>	pc_jump_sig,
+		A			=>	REG_DATA_IN1,
+		B			=>	alu_b_in_sig,
+		C_IN		=>	alu_c_in_sig,
 		
-		SEL		=>	JUMP_SEL,
-		Q		=>	pc_in_sig
+		A_INVERT	=>	alu_a_invert_sig,
+		B_INVERT	=>	alu_b_invert_sig,
+		
+		OPERATION	=>	alu_operation_sig,
+		
+		RESULT		=>	ALU_RESULT
 	);
-	
-	-- duplicate the sign bit
-	instruction_imm_sign_ext_sig <= (others => instruction_sig(15));
-	-- sign extension an shift 2 left of the instruction immediate using concatenation
-	branch_addition_sig <= instruction_imm_sign_ext_sig & instruction_sig(15 downto 0) & "00";
-	-- concatenation the upper 4 bits of PC+4 and 26 bit of the instruction with shift 2 left
-	pc_jump_sig <= pc_plus_4_sig(31 downto 28) & instruction_sig(25 downto 0) & "00";
-	
-	INSTRUCTION <= instruction_sig;
+
+ALU_CONTROL: alu_control_unit
+	port map (
+		FUNCT		=>	FUNCT,
+		ALU_OP		=>	ALU_OP,
+
+		A_INVERT	=>	alu_a_invert_sig,
+		B_INVERT	=>	alu_b_invert_sig,
+		C_IN		=>	alu_c_in_sig,
+		OPERATION	=>	alu_operation_sig
+	);
 	
 end architecture;
