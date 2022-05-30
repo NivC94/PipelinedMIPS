@@ -1,7 +1,7 @@
-*.wlf
+sim/work/_vmake
+*.qtl
+*.qpg
 *.qdb
 sim/work/_info
-*.qpg
-*.qtl
-sim/work/_vmake
-*.bak
+*.wlf
+sim/wave.do
