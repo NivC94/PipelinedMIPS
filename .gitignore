@@ -5,3 +5,4 @@ sim/work/_vmake
 *.qdb
 sim/work/_info
 *.wlf
+sim/wave.do
