@@ -13,6 +13,7 @@ port (
 	--data input
 	ALU_RES_IN			: in std_logic_vector(31 downto 0);
 	READ_DATA_IN		: in std_logic_vector(4 downto 0);
+	DST_REG_IN			: in std_logic_vector(4 downto 0);
 	
 	--WB controll signals out
 	MEM_TO_REG_OUT		: out std_logic;
@@ -20,7 +21,8 @@ port (
 	
 	--data output
 	ALU_RES_OUT			: out std_logic_vector(31 downto 0);
-	READ_DATA_OUT		: out std_logic_vector(4 downto 0)
+	READ_DATA_OUT		: out std_logic_vector(4 downto 0);
+	DST_REG_OUT			: out std_logic_vector(4 downto 0)
 );
 end entity;
 
@@ -100,6 +102,20 @@ READ_DATA_REG: register_nbit
 		RST		=>	RST,
 		
 		D_OUT	=>	READ_DATA_OUT
-	);	
+	);
+	
+DST_REG_REG: register_nbit
+	generic map(
+		G_N 	=>	DST_REG_IN'length
+	)
+	port map(
+		D_IN	=>	DST_REG_IN,
+		
+		CLK		=>	CLK,
+		RST		=>	RST,
+		
+		D_OUT	=>	DST_REG_OUT
+	);
+	
 end architecture;
 

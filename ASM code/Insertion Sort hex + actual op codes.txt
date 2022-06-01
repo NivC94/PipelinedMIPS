@@ -1,0 +1,23 @@
+ Address    Code        Basic                     Source
+
+0x00000000  0x8c082050  lw $8,0x00002050($0)  9    lw $t0, length	# array length
+0x00000004  0x20090004  addi $9,$0,0x00000004 11   addi $t1, $zero, 4	# external loop index start from the byte in index 1
+0x00000008  0x0128502a  slt $10,$9,$8         14   	slt $t2, $t1, $t0
+0x0000000c  0x11400011  beq $10,$0,0x00000011 15   	beq $t2, $zero, EndLoop
+0x00000010  0x20010004  addi $1,$0,0x00000004 16   	subi $t2, $t1, 4	#internal index
+0x00000014  0x01215022  sub $10,$9,$1              
+0x00000018  0x8d2b0000  lw $11,0x00000000($9) 17   	lw $t3, 0($t1)		#temporary variable for the swap
+0x0000001c  0x8d4c0000  lw $12,0x00000000($10)19   		lw $t4, 0($t2)
+0x00000020  0x016c682a  slt $13,$11,$12       21   		slt $t5, $t3, $t4
+0x00000024  0x11a00006  beq $13,$0,0x00000006 22   		beq $t5, $zero, EndInternalLoop
+0x00000028  0xad4c0004  sw $12,0x00000004($10)23   		sw $t4, 4($t2) #the value is higher so lets swap to find its place
+0x0000002c  0x000a602a  slt $12,$0,$10        26   		slt $t4, $zero, $t2
+0x00000030  0x11800005  beq $12,$0,0x00000005 27   		beq $t4, $zero, EndInternalLoopZ
+0x00000034  0x20010004  addi $1,$0,0x00000004 28   		subi $t2, $t2, 4
+0x00000038  0x01415022  sub $10,$10,$1             
+0x0000003c  0x08000007  j 0x0000001c          29   		j InternalLoop
+0x00000040  0xad4b0004  sw $11,0x00000004($10)31   	sw $t3, 4($t2)
+0x00000044  0x08000013  j 0x0000004c          32   	j Continue
+0x00000048  0xad4b0000  sw $11,0x00000000($10)34   	sw $t3, 0($t2)
+0x0000004c  0x21290004  addi $9,$9,0x00000004 36   	addi $t1, $t1, 4
+0x00000050  0x08000002  j 0x00000008          37   	j ExternalLoop
