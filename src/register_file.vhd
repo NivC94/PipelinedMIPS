@@ -33,9 +33,12 @@ architecture behave of register_file is
 				end if;
 			end if;
 			
-			READ_DATA_1 <= register_data(to_integer(unsigned(READ_REG_1)));
-			READ_DATA_2 <= register_data(to_integer(unsigned(READ_REG_2)));
+			
 		end if;
 	end process;
+	
+	READ_DATA_1 <= register_data(to_integer(unsigned(READ_REG_1)));
+	READ_DATA_2 <= register_data(to_integer(unsigned(READ_REG_2)));
+	
 end architecture;
 			

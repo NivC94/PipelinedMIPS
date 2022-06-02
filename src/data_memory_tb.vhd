@@ -9,9 +9,9 @@ architecture sim of data_memory_tb is
 
 -- Constants declaration
 
-	constant C_ADDR_WIDTH : integer := 27;
-	constant C_DMEM_FILE_NAME	: string := "../src/Data_deci.txt";
-	constant C_FILE_HEX_FORMAT : boolean := false;
+	constant C_ADDR_WIDTH : integer := 16;
+	constant C_DMEM_FILE_NAME	: string := "../ASM code/Insertion Sort hex data.txt";
+	constant C_FILE_HEX_FORMAT : boolean := true;
 	
 	constant C_CLK_PRD : time := 10 ns;
 

@@ -12,7 +12,7 @@ port (
 	
 	--data input
 	ALU_RES_IN			: in std_logic_vector(31 downto 0);
-	READ_DATA_IN		: in std_logic_vector(4 downto 0);
+	READ_DATA_IN		: in std_logic_vector(31 downto 0);
 	DST_REG_IN			: in std_logic_vector(4 downto 0);
 	
 	--WB controll signals out
@@ -21,7 +21,7 @@ port (
 	
 	--data output
 	ALU_RES_OUT			: out std_logic_vector(31 downto 0);
-	READ_DATA_OUT		: out std_logic_vector(4 downto 0);
+	READ_DATA_OUT		: out std_logic_vector(31 downto 0);
 	DST_REG_OUT			: out std_logic_vector(4 downto 0)
 );
 end entity;
