@@ -31,28 +31,34 @@ architecture behave of data_memory is
 	
 	type memory is array(0 to ((2**G_ADDR_WIDTH)-1)) of std_logic_vector(7 downto 0); -- define new type called memory
 	
+	signal d_mem	: memory := (others => (others => '0')); -- initialize data memory with zeros
+
+	
 begin
+
+	-- output the data of the 4 bytes following the given address concatenated together 
+	RD_DATA <=	d_mem(to_integer(unsigned(ADDR)))	&
+				d_mem(to_integer(unsigned(ADDR))+1) &
+				d_mem(to_integer(unsigned(ADDR))+2)	&
+				d_mem(to_integer(unsigned(ADDR))+3) when ( (MEM_RD = '1') and (is_startup = '0') )
+			else
+				(others => '0');
 
 	process(is_startup, CLK)
 	variable addr_aux : integer := 0;
 	variable data_line : line; -- auxiliary variable of type line to save the raw line
 	variable data	: std_logic_vector(31 downto 0); -- auxiliary variable to save the data
 	variable data_int : integer; -- auxiliary variable to save the data if the file is in decimal format
-	variable d_mem	: memory := (others => (others => '0')); -- initialize data memory with zeros
 	begin
 		
 		if is_startup = '0' then
 			if rising_edge(CLK) then
 				if MEM_WR = '1' then
 					-- write the input data divided to the 4 bytes following the given address
-					d_mem(to_integer(unsigned(ADDR))) 	:= WR_DATA(31 downto 24);
-					d_mem(to_integer(unsigned(ADDR))+1) := WR_DATA(23 downto 16);
-					d_mem(to_integer(unsigned(ADDR))+2) := WR_DATA(15 downto 8);
-					d_mem(to_integer(unsigned(ADDR))+3) := WR_DATA(7 downto 0);
-				elsif MEM_RD = '1' then
-					-- output the data of the 4 bytes following the given address concatenated together 
-					RD_DATA <=	d_mem(to_integer(unsigned(ADDR)))	&	d_mem(to_integer(unsigned(ADDR))+1) &
-								d_mem(to_integer(unsigned(ADDR))+2)	&	d_mem(to_integer(unsigned(ADDR))+3);
+					d_mem(to_integer(unsigned(ADDR))) 	<= WR_DATA(31 downto 24);
+					d_mem(to_integer(unsigned(ADDR))+1) <= WR_DATA(23 downto 16);
+					d_mem(to_integer(unsigned(ADDR))+2) <= WR_DATA(15 downto 8);
+					d_mem(to_integer(unsigned(ADDR))+3) <= WR_DATA(7 downto 0);
 				end if;
 			end if;
 		-- on startup, reading the given text file into the memory
@@ -73,10 +79,10 @@ begin
 				end if;
 				
 				-- save each byte of the data to the memory and increment the address by 4
-				d_mem(addr_aux)		:= data(31 downto 24);
-				d_mem(addr_aux+1)	:= data(23 downto 16);
-				d_mem(addr_aux+2)	:= data(15 downto 8);
-				d_mem(addr_aux+3)	:= data(7 downto 0);
+				d_mem(addr_aux)		<= data(31 downto 24);
+				d_mem(addr_aux+1)	<= data(23 downto 16);
+				d_mem(addr_aux+2)	<= data(15 downto 8);
+				d_mem(addr_aux+3)	<= data(7 downto 0);
 				
 				addr_aux := addr_aux + 4;
 			end loop;

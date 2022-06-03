@@ -2,6 +2,13 @@ library ieee;
 use ieee.std_logic_1164.all;
 
 entity pipelined_mips is
+generic (
+	G_IMEM_ADDR_WIDTH	: integer := 32; -- only for simulation purpose to limit memory size (due to simulation limits)
+	G_IMEM_FILE_NAME	: string := "source.txt"; -- instructions file name
+	G_ADDR_WIDTH		: integer := 32; -- only for simulation purpose (due to simulation limits)
+	G_DMEM_FILE_NAME	: string := "source.txt"; -- data file name
+	G_FILE_HEX_FORMAT	: boolean := true -- if false file is in decimal format
+);
 port (
 	CLK		: in std_logic;
 	RST		: in std_logic
@@ -13,7 +20,7 @@ architecture struct of pipelined_mips is
 -- Component declaration
 	
 	component instruction_fetch_module is
-	generic(
+	generic (
 		G_IMEM_ADDR_WIDTH	: integer := 32; -- only for simulation purpose to limit memory size (due to simulation limits)
 		G_IMEM_FILE_NAME	: string := "source.txt" -- instructions file name
 	);
@@ -94,7 +101,7 @@ architecture struct of pipelined_mips is
 	end component;
 	
 	component data_memory is
-	generic(
+	generic (
 		G_ADDR_WIDTH		: integer := 32; -- only for simulation purpose (due to simulation limits)
 		G_DMEM_FILE_NAME	: string := "source.txt"; -- data file name
 		G_FILE_HEX_FORMAT	: boolean := true -- if false file is in decimal format
@@ -244,17 +251,6 @@ architecture struct of pipelined_mips is
 	);
 	end component;
 	
--- Constant declaration
-
-	-- Instruction memory constants
-	constant C_IMEM_ADDR_WIDTH	: integer := 20;
-	constant C_IMEM_FILE_NAME	: string :=	"../ASM code/Insertion Sort hex instruction codes.txt";
-	
-	-- Data memory constants
-	constant C_ADDR_WIDTH		: integer := 16;
-	constant C_DMEM_FILE_NAME	: string := "../ASM code/Insertion Sort hex data.txt";
-	constant C_FILE_HEX_FORMAT	: boolean := true;
-	
 -- Signals declaration
 	
 	-- Branch/Jump signals
@@ -363,8 +359,8 @@ begin
 
 INSTRUCTION_FETCH: instruction_fetch_module
 	generic map (
-		G_IMEM_ADDR_WIDTH	=>	C_IMEM_ADDR_WIDTH,
-		G_IMEM_FILE_NAME	=>	C_IMEM_FILE_NAME
+		G_IMEM_ADDR_WIDTH	=>	G_IMEM_ADDR_WIDTH,
+		G_IMEM_FILE_NAME	=>	G_IMEM_FILE_NAME
 	)
 	port map (
 		PC_BRANCH_ADDR		=>	pc_branch_addr_sig,
@@ -533,9 +529,9 @@ EX_MEM_REGISTER: ex_mem_reg
 	
 DATA_MEM: data_memory
 	generic map (
-		G_ADDR_WIDTH		=>	C_ADDR_WIDTH,
-		G_DMEM_FILE_NAME	=>	C_DMEM_FILE_NAME,
-		G_FILE_HEX_FORMAT	=>	C_FILE_HEX_FORMAT
+		G_ADDR_WIDTH		=>	G_ADDR_WIDTH,
+		G_DMEM_FILE_NAME	=>	G_DMEM_FILE_NAME,
+		G_FILE_HEX_FORMAT	=>	G_FILE_HEX_FORMAT
 	)
 	port map (
 		ADDR		=>	alu_result_reg_out_sig,

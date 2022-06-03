@@ -10,10 +10,26 @@ architecture sim of pipelined_mips_tb is
 	
 	constant C_CLK_PRD : time := 10 ns;
 	constant C_RST_TIME : time := 30 ns;
+	
+	-- Instruction memory constants
+	constant C_IMEM_ADDR_WIDTH	: integer := 20;
+	constant C_IMEM_FILE_NAME	: string :=	"../ASM code/Insertion Sort hex instruction codes.txt";
+	
+	-- Data memory constants
+	constant C_ADDR_WIDTH		: integer := 16;
+	constant C_DMEM_FILE_NAME	: string := "../ASM code/Insertion Sort hex data.txt";
+	constant C_FILE_HEX_FORMAT	: boolean := true;
 
 -- Component declaration
 
 	component pipelined_mips is
+	generic (
+		G_IMEM_ADDR_WIDTH	: integer := 32; -- only for simulation purpose to limit memory size (due to simulation limits)
+		G_IMEM_FILE_NAME	: string := "source.txt"; -- instructions file name
+		G_ADDR_WIDTH		: integer := 32; -- only for simulation purpose (due to simulation limits)
+		G_DMEM_FILE_NAME	: string := "source.txt"; -- data file name
+		G_FILE_HEX_FORMAT	: boolean := true -- if false file is in decimal format
+	);
 	port (
 		CLK		: in std_logic;
 		RST		: in std_logic
@@ -35,6 +51,13 @@ begin
 -- Components instantiations
 
 DUT: pipelined_mips
+	generic map (
+		G_IMEM_ADDR_WIDTH	=>	C_IMEM_ADDR_WIDTH,
+		G_IMEM_FILE_NAME	=>	C_IMEM_FILE_NAME,
+		G_ADDR_WIDTH		=>	C_ADDR_WIDTH,
+		G_DMEM_FILE_NAME	=>	C_DMEM_FILE_NAME,
+		G_FILE_HEX_FORMAT	=>	C_FILE_HEX_FORMAT
+	)
 	port map (
 		CLK		=>	clk_sig,
 		RST		=>	rst_sig

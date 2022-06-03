@@ -2,11 +2,11 @@
 
 srcArr:		.word	4, 5, 12, 19, 2, 18, 3 ,4, 9, 10, 17, 15, 11, 7 ,6, 8, 1, 20, 16, 14
 
-length:		.word 	80
+end:		.space 4
 
 .text
 
-la $t0, length	# array length
+la $t0, end	# ending index label
 
 addi $t1, $zero, 0x2004	# external loop index start from the byte in index 1
 nop

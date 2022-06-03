@@ -43,12 +43,8 @@ vcom ../src/pipelined_mips.vhd
 vcom ../src/pipelined_mips_tb.vhd
 
 vsim pipelined_mips_tb
-add wave -radix hexadecimal pipelined_mips_tb/DUT/*
-add wave -radix hexadecimal pipelined_mips_tb/DUT/DATA_MEM/line__36/d_mem(8192:8512)
 
-add wave -radix hexadecimal pipelined_mips_tb/DUT/INSTRUCTION_DECODE/CU/BRANCH
-add wave -radix hexadecimal pipelined_mips_tb/DUT/INSTRUCTION_DECODE/CU/JUMP
-add wave -radix hexadecimal pipelined_mips_tb/DUT/INSTRUCTION_DECODE/REG_FILE/register_data
+do PipelinedMIPS_waves.do
 
 run -all
 wave zoom full
