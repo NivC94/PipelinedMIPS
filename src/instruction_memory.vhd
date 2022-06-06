@@ -27,7 +27,6 @@ architecture behave of instruction_memory is
 	
 begin
 
-proc:
 	process(is_startup, READ_ADDR)
 	variable addr		: integer := 0;
 	variable data_line	: line; -- auxiliary variable of type line to save the raw line

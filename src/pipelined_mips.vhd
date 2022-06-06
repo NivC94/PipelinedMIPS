@@ -344,6 +344,7 @@ architecture struct of pipelined_mips is
 	
 begin
 
+-- For simulation purposes only!
 	process(CLK)
 	begin
 		if rising_edge(CLK) then

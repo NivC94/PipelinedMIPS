@@ -7,54 +7,37 @@ end:		.space 4
 .text
 
 la $t0, end	# ending index label
+la $t6, srcArr	# saving the starting index of the array
+la $t1, 0x2004	# external loop index start from the byte in index 1
 
-addi $t1, $zero, 0x2004	# external loop index start from the byte in index 1
-nop
 ExternalLoop:
-	nop
-	nop
+	# break from the External loop when $t1 is out of the array ($t1 >= $t0)
 	slt $t2, $t1, $t0
-	nop
-	nop
-	nop
 	beq $t2, $zero, EndLoop
-	nop
 	
-	addi $t2, $t1, -4	#internal index
-	lw $t3, 0($t1)		#temporary variable for the swap
+	addi $t2, $t1, -4	# internal index, initialize to be the previous index of $t1 in the array
+	lw $t3, 0($t1)		# temporary variable for the swap
 	InternalLoop:
-		nop
-		nop
 		lw $t4, 0($t2)
-		nop
-		nop
-		nop
-		#if the value in the index below the index of the temoorary variable is lower, we are ok and can continue to external loop
+		# break the internal loop if the the position of the temporary variable has been found
+		# temporary variable (array[$t1]) >= array[$t2]
 		slt $t5, $t3, $t4
-		nop
-		nop
-		nop
 		beq $t5, $zero, EndInternalLoop
-		nop
-		sw $t4, 4($t2) #the value is higher so lets swap to find its place
+		sw $t4, 4($t2) # the value is higher so lets swap to find its place
 
-		#last internal loop is for index 0
-		slt $t4, $zero, $t2
-		nop
-		nop
-		nop
-		beq $t4, $zero, EndInternalLoopZ
-		nop
+		# if the internal loop index reached the start of the array then break from the internal loop (index 0 of the array >= $t2)
+		# in case all the values are greater than the temporary value
+		slt $t4, $t6, $t2
+		beq $t4, $zero, ReachedStartArr
 		addi $t2, $t2, -4
 		j InternalLoop
-		nop
+	# save the temporary value in its position
 	EndInternalLoop:	
-	nop
 	sw $t3, 4($t2)
 	j Continue
-	nop
-	EndInternalLoopZ:
+	ReachedStartArr:
 	sw $t3, 0($t2)
+	
 	Continue:
 	addi $t1, $t1, 4
 	j ExternalLoop

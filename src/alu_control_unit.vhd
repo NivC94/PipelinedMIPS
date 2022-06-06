@@ -29,18 +29,16 @@ architecture behave of alu_control_unit is
 	constant operation_or	: std_logic_vector(1 downto 0) := "01";
 	constant operation_sum	: std_logic_vector(1 downto 0) := "10";
 	constant operation_slt	: std_logic_vector(1 downto 0) := "11";
-	
-	-- TODO: temp
-	signal error_sig		: std_logic;
 
 begin
 
 	process(FUNCT, ALU_OP)
 	begin
-		error_sig <= '0';
-		B_INVERT	<=	'0';
+		A_INVERT    <=	'0';
+		B_INVERT    <=	'0';
 		C_IN	    <=	'0';
-		OPERATION   <=	operation_sum;
+		OPERATION   <=	"00";
+
 		case ALU_OP is
 			when alu_op_lw_sw	=>	-- ADD
 									B_INVERT	<=	'0';
@@ -72,11 +70,9 @@ begin
 															B_INVERT	<=	'1';
 											                C_IN	    <=	'1';
 											                OPERATION   <=	operation_slt;
-										when others		=>
-															error_sig	<=	'1';
+										when others		=>	-- ERROR
 									end case;
-			when others 		=>
-									error_sig	<=	'1';
+			when others 		=>	-- ERROR
 		end case;
 		
 	end process;

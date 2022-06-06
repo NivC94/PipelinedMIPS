@@ -35,86 +35,52 @@ architecture behave of control_unit is
 	
 begin
 	
-with OPCODE select
-	BRANCH 		<=	'0' when r_type_opcode,
-					'0' when jump_opcode,
-					'1' when beq_opcode,
-					'0' when lw_opcode,
-					'0' when sw_opcode,
-					'0' when addi_opcode,
-					'0' when others;
-
-with OPCODE select				
-	JUMP	 	<=	'0' when r_type_opcode,
-					'1' when jump_opcode,
-					'0' when beq_opcode,
-					'0' when lw_opcode,
-					'0' when sw_opcode,
-					'0' when addi_opcode,
-					'0' when others;
-				
-with OPCODE select				
-	MEM_TO_REG	<=	'0' when r_type_opcode,
-					'0' when jump_opcode,
-					'0' when beq_opcode,
-					'1' when lw_opcode,
-					'0' when sw_opcode,
-					'0' when addi_opcode,
-					'0' when others;
-
-with OPCODE select
-	REG_WRITE 	<=	'1' when r_type_opcode,
-					'0' when jump_opcode,
-					'0' when beq_opcode,
-					'1' when lw_opcode,
-					'0' when sw_opcode,
-					'1' when addi_opcode,
-					'0' when others;
-
-with OPCODE select			
-	MEM_READ 	<=	'0' when r_type_opcode,
-					'0' when jump_opcode,
-					'0' when beq_opcode,
-					'1' when lw_opcode,
-					'0' when sw_opcode,
-					'0' when addi_opcode,
-					'0' when others;
-
-with OPCODE select			
-	MEM_WRITE	 <=	'0' when r_type_opcode,
-					'0' when jump_opcode,
-					'0' when beq_opcode,
-					'0' when lw_opcode,
-					'1' when sw_opcode,
-					'0' when addi_opcode,
-					'0' when others;
-
-with OPCODE select			
-	ALU_SRC		 <=	'0' when r_type_opcode,
-					'0' when jump_opcode,
-					'0' when beq_opcode,
-					'1' when lw_opcode,
-					'1' when sw_opcode,
-					'1' when addi_opcode,
-					'0' when others;
-					
-with OPCODE select
-	REG_DST		 <=	'1' when r_type_opcode,
-					'0' when jump_opcode,
-					'0' when beq_opcode,
-					'0' when lw_opcode,
-					'0' when sw_opcode,
-					'0' when addi_opcode,
-					'0' when others;
-					
-with OPCODE select					
-	ALU_OP		 <=	"10" when r_type_opcode,
-					"00" when jump_opcode,
-					"01" when beq_opcode,
-					"00" when lw_opcode,
-					"00" when sw_opcode,
-					"00" when addi_opcode,
-					"00" when others;
+	process(OPCODE)
+	begin
+		BRANCH	<= '0';
+		JUMP	<= '0';
+		
+		MEM_TO_REG	<=	'0';
+		REG_WRITE	<=	'0';
+		
+		MEM_READ	<= '0';
+		MEM_WRITE	<= '0';
+		
+		ALU_SRC		<=	'0';
+		REG_DST		<=	'0';
+		ALU_OP		<=	"00";
+		
+		case OPCODE is
+			when r_type_opcode	=>	-- R-Type
+									REG_WRITE	<=	'1';
+									ALU_OP		<=	"10";
+									REG_DST		<=	'1';
+									
+			when jump_opcode	=>	-- Jump
+									JUMP	<=	'1';
+									
+			when beq_opcode		=>	-- BEQ
+									BRANCH	<=	'1';
+									ALU_OP	<=	"01";
+									
+			when lw_opcode		=>	-- LW
+									MEM_TO_REG	<=	'1';
+									REG_WRITE	<=	'1';
+									MEM_READ	<=	'1';
+									ALU_SRC		<=	'1';
+									
+			when sw_opcode		=>	-- SW
+									MEM_WRITE	<=	'1';
+									ALU_SRC		<=	'1';
+			
+			when addi_opcode	=>	-- ADDI
+									REG_WRITE	<=	'1';
+									ALU_SRC		<=	'1';
+									
+			when others 		=>	-- ERROR
+		end case;
+	
+	end process;
 
 end architecture;
 

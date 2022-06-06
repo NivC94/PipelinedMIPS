@@ -28,12 +28,10 @@ architecture behave of register_file is
 	begin
 		if rising_edge(CLK) then
 			if REG_WRITE = '1' then
-				if WRITE_REG /= "00000" then	-- Zero reg write is discarded - allways stays zero
+				if WRITE_REG /= "00000" then	-- Zero reg write is discarded - always stays zero
 					register_data(to_integer(unsigned(WRITE_REG))) <= WRITE_DATA;
 				end if;
 			end if;
-			
-			
 		end if;
 	end process;
 	
